@@ -10,8 +10,8 @@ public class Calc {
 
 class Calculator {
 	int [] arN = {0,1,2,3,4,5,6,7,8,9,10};
-	String[] rimNbig = new String[]{"0","I","II","III","IV","V","VI","VII","VIII","IX","X"};
-	String[] rimNmini = new String[]{"0","i","ii","iii","iv","v","vi","vii","viii","ix","x"};
+	String[] rimNbig = new String[]{"0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX"};
+	String[] rimNmini = new String[]{"0","i","ii","iii","iv","v","vi","vii","viii","ix","x","xi","xii","xiii","xiv","xv","xvi","xvii","xviii","xix","xx"};
 	String[] dlyProverki;
 	Scanner sc;
 	Boolean isNumeric0 = false;
