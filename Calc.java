@@ -3,19 +3,17 @@ import java.util.Scanner;
 public class Calc {
 
 	public static void main(String[] args) {
-		System.out.println("Введите выражение: ");
+		System.out.println("Введите выражение вида a ДЕЙСТВИЕ b (без пробелов): ");
 		Scanner sc = new Scanner(System.in);
-		String expressing = "";
+		String expressing;
+		
 		try {
-		expressing = sc.next();
-		String regx = "(1|2|3|4|5|6|7|8|9|10|i|I|ii|II|iii|III|iv|IV|v|V|vi|VI|vii|VII|viii|VIII|ix|IX|x|X)(\\+|\\-|\\*|\\/)(1|2|3|4|5|6|7|8|9|10|i|I|ii|II|iii|III|iv|IV|v|V|vi|VI|vii|VII|viii|VIII|ix|IX|x|X)" ;
-		if (expressing.matches(regx)) {
+			expressing = sc.next();
+			expressing = expressing.replaceAll(" ", "");
 			new Calculator(expressing);
-		} else {
-			return;
-		}
 		} catch (Exception ex){
 			System.out.println(ex.getMessage());
+			return;
 		} finally {
 			sc.close();
 		}	
@@ -24,9 +22,8 @@ public class Calc {
 }
 
 class Calculator {
-	int [] arN = {0,1,2,3,4,5,6,7,8,9,10};
-	String[] rimNbig = new String[]{"0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX"};
-	String[] rimNmini = new String[]{"0","i","ii","iii","iv","v","vi","vii","viii","ix","x","xi","xii","xiii","xiv","xv","xvi","xvii","xviii","xix","xx"};
+	
+	String[] rimNbig = new String[]{"0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI","XXII","XXIII","XXIV","XXV","XXVI","XXVII","XXVIII","XXIX","XXX","XXXI","XXXII","XXXIII","XXXIV","XXXV","XXXVI","XXXVII","XXXVIII","XXXIX","XL","XLI","XLII","XLIII","XLIV","XLV","XLVI","XLVII","XLVIII","XLIX","L","LI","LII","LIII","LIV","LV","LVI","LVII","LVIII","LIX","LX","LXI","LXII","LXIII","LXIV","LXV","LXVI","LXVII","LXVIII","LXIX","LXX","LXXI","LXXII","LXXIII","LXXIV","LXXV","LXXVI","LXXVII","LXXVIII","LXXIX","LXXX","LXXXI","LXXXII","LXXXIII","LXXXIV","LXXXV","LXXXVI","LXXXVII","LXXXVIII","LXXXIX","XC","XCI","XCII","XCIII","XCIV","XCV","XCVI","XCVII","XCVIII","XCIX","C"};
 
 	Boolean isNumeric0 = false;
 	Boolean isNumeric1 = false;
@@ -38,49 +35,48 @@ class Calculator {
 	
 	String action = "";           // Действие + - * /
 	
-	public Calculator(String expr) {
+	public Calculator(String expr) throws MyOutNumberException{
 		parseExpr(expr);
 	}
-	private void parseExpr (String expr){            //Разбираем полученное выражение
+	
+	private void parseExpr (String expr) throws MyOutNumberException {            //Разбираем полученное выражение
 		String[] dlyProverki;
 		dlyProverki = expr.split("\\+|\\-|\\*|\\/",2);
+		//System.out.println(dlyProverki[0] + "    "+dlyProverki[1]);
+
 		this.action = expr.substring(expr.lastIndexOf(dlyProverki[1])-1, expr.lastIndexOf(dlyProverki[1]));		
-		
-		for (int i = 0 ; i < arN.length; i++){
-			if (dlyProverki[0].equals(Integer.toString(arN[i]))){
-				isNumeric0 = true;
-				a = i;
-			}
-			if (dlyProverki[1].equals(Integer.toString(arN[i]))){
-				isNumeric1 = true;
-				b = i;
+		if (dlyProverki[0].matches("\\d+")){
+			isNumeric0 = true;
+			a = Integer.parseInt(dlyProverki[0]);
+		} else {
+			isNumeric0 = false;
+			dlyProverki[0]=dlyProverki[0].toUpperCase();
+		}
+		if (dlyProverki[1].matches("\\d+")){
+			isNumeric1 = true;
+			b = Integer.parseInt(dlyProverki[1]);
+		} else {
+			isNumeric1 = false;
+			dlyProverki[1]=dlyProverki[1].toUpperCase();
+		}
+		if (!dlyProverki[1].matches("\\d+")){
+			for (int i = 0 ; i < rimNbig.length; i++ ){
+				if (dlyProverki[0].equals(rimNbig[i])){
+					isRim0 = true;
+					this.a = i;
+				}
+				if (dlyProverki[1].equals(rimNbig[i])){
+					isRim1 = true;
+					this.b = i;
+				}
 			}
 		}
-		for (int i = 0 ; i < rimNbig.length; i++ ){
-			if (dlyProverki[0].equals(rimNbig[i])){
-				isRim0 = true;
-				a = i;
-			}
-			if (dlyProverki[1].equals(rimNbig[i])){
-				isRim1 = true;
-				b = i;
-			}
-		}
-		for (int i = 0 ; i < rimNmini.length; i++){
-			if (dlyProverki[0].equals(rimNmini[i])){
-				isRim0 = true;
-				a = i;
-			}
-			if (dlyProverki[1].equals(rimNmini[i])){
-				isRim1 = true;
-				b = i;
-			}
-		}
-		
 		if (isNumeric0 && isNumeric1){ // Если две арабские
+			if ((this.a>10)||(this.b>10)) throw new MyOutNumberException("Вылет.....");
 			System.out.println(action(this.action, true));
 		}
 		if (isRim0 && isRim1){ // Если две римские
+			if ((this.a>10)||(this.b>10)) throw new MyOutNumberException("Вылет.....");
 			System.out.println(action(this.action));
 		}
 	}
@@ -88,7 +84,7 @@ class Calculator {
 	public int action(String act, Boolean num){ // метод действия с арабскими цыфрами
 		int rez = 0;
 		
-		switch (action){
+		switch (action){ 
 			case "+": rez = a + b; break;
 			case "-": rez = a - b; break;
 			case "*": rez = a * b; break;
@@ -115,5 +111,10 @@ class Calculator {
 			}
 		}
 		return ops;
+	}
+}
+class MyOutNumberException extends Exception {
+	public MyOutNumberException (String str){
+		super(str);
 	}
 }
